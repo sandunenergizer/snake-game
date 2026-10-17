@@ -5,30 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Snake</title>
 <style>
-  :root{color-scheme:dark;--bg1:#071521;--bg2:#102d3d;--bg-glow:#174250;--panel:#153246;--text:#eff8f6;--muted:#a6c0c4;--accent:#a8f06a;--accent2:#43d9c5;--accent2-text:#082321;--btn-text:#10251f;--border:#3e7880;--board:#0b202b;--grid-mark:rgba(255,255,255,.025);--snake-head:#eff8f6;--snake:#a8f06a;--snake-dark:#59bd71;--snake-outline:rgba(4,20,24,.35);--snake-eye:#10251f;--food:#ffb454;--food-highlight:rgba(255,255,255,.55);--contrast-line:#fff;--rock:#6d8790;--rock-outline:#233b46;--particle-a:#a8f06a;--particle-b:#43d9c5;--particle-c:#ffb454;--particle-d:#eff8f6;--menu-surface:rgba(5,18,27,.9);--menu-border:rgba(255,255,255,.14);--shadow:rgba(0,0,0,.47)}
-  body.hc{--bg1:#000;--bg2:#000;--bg-glow:#000;--panel:#000;--text:#fff;--muted:#fff;--accent:#ffff00;--accent2:#fff;--accent2-text:#000;--btn-text:#000;--border:#fff;--board:#000;--grid-mark:transparent;--snake-head:#00ffff;--snake:#fff;--snake-dark:#fff;--snake-outline:#000;--snake-eye:#000;--food:#ffff00;--food-highlight:#fff;--contrast-line:#fff;--rock:#fff;--rock-outline:#000;--particle-a:#fff;--particle-b:#ff0;--particle-c:#fff;--particle-d:#ff0;--menu-surface:#000;--menu-border:#fff;--shadow:transparent}
+  :root{color-scheme:dark;--bg1:#071521;--bg2:#102d3d;--bg-glow:#174250;--panel:#153246;--text:#eff8f6;--muted:#c4d5d7;--accent:#a8f06a;--accent2:#43d9c5;--accent2-text:#082321;--btn-text:#10251f;--border:#3e7880;--focus-ring:#fff;--board:#0b202b;--grid-mark:rgba(255,255,255,.025);--snake-head:#eff8f6;--snake:#a8f06a;--snake-dark:#59bd71;--snake-outline:rgba(4,20,24,.35);--snake-eye:#10251f;--food:#ffb454;--food-highlight:rgba(255,255,255,.55);--contrast-line:#fff;--rock:#6d8790;--rock-outline:#233b46;--particle-a:#a8f06a;--particle-b:#43d9c5;--particle-c:#ffb454;--particle-d:#eff8f6;--menu-surface:rgba(5,18,27,.9);--menu-border:rgba(255,255,255,.14);--shadow:rgba(0,0,0,.47)}
+  body.hc{--bg1:#000;--bg2:#000;--bg-glow:#000;--panel:#000;--text:#fff;--muted:#fff;--accent:#ffff00;--accent2:#fff;--accent2-text:#000;--btn-text:#000;--border:#fff;--focus-ring:#ff0;--board:#000;--grid-mark:transparent;--snake-head:#00ffff;--snake:#fff;--snake-dark:#fff;--snake-outline:#000;--snake-eye:#000;--food:#ffff00;--food-highlight:#fff;--contrast-line:#fff;--rock:#fff;--rock-outline:#000;--particle-a:#fff;--particle-b:#ff0;--particle-c:#fff;--particle-d:#ff0;--menu-surface:#000;--menu-border:#fff;--shadow:transparent}
   *{box-sizing:border-box}
-  body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;
+  body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:clamp(10px,2vw,18px);
        background:radial-gradient(ellipse at 50% 20%,var(--bg-glow) 0,var(--bg2) 35%,var(--bg1) 100%);color:var(--text);font-family:system-ui,Segoe UI,Arial,sans-serif;touch-action:manipulation}
   h1{margin:0;font-size:2rem;letter-spacing:.08em;color:var(--accent)}
   body.hc h1{background:none;color:#fff}
   .hud{display:flex;gap:22px;font-size:1.05rem;flex-wrap:wrap;justify-content:center;color:var(--muted)}
   .hud b{color:var(--accent)}
-  .wrap{position:relative;width:min(92vw,480px)}
+  .wrap{position:relative;width:min(92vw,480px);max-width:100%}
   canvas{width:100%;height:auto;display:block;border:3px solid var(--border);border-radius:16px;touch-action:none;box-shadow:0 18px 55px var(--shadow)}
   body.hc canvas{box-shadow:none;border-width:5px}
   #msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
-       background:var(--menu-surface);border:1px solid var(--menu-border);border-radius:13px;text-align:center;padding:1.25rem;backdrop-filter:blur(8px);transition:opacity .25s}
+       background:var(--menu-surface);border:1px solid var(--menu-border);border-radius:13px;text-align:center;padding:1.25rem;backdrop-filter:blur(8px);overflow-y:auto;overscroll-behavior:contain;transition:opacity .25s,visibility 0s}
   body.hc #msg{background:#000}
-  #msg.hide{opacity:0;pointer-events:none}
+  #msg.hide{opacity:0;pointer-events:none;visibility:hidden;transition:opacity .25s,visibility 0s linear .25s}
   #msg h2{font-size:clamp(1.7rem,6vw,2.35rem);letter-spacing:.03em;color:var(--accent)}
   #sub{max-width:28ch;color:var(--muted);line-height:1.5}
   #scores{width:min(100%,280px);margin:0;padding:8px 12px;border:1px solid var(--menu-border);border-radius:12px;background:var(--panel);text-align:left;color:var(--muted);font-size:.9rem}
   #scores h3{margin:0 0 4px;color:var(--text);font-size:.9rem}#scores ol{margin:0;padding-left:1.5rem}#scores li{padding:1px 0}#scores .empty{list-style:none;margin-left:-1.5rem}
   .menu-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-  button{font:inherit;font-weight:700;padding:.65rem 1.3rem;border:2px solid transparent;border-radius:12px;background:var(--accent);color:var(--btn-text);cursor:pointer;transition:transform .12s,background .2s}
+  button{font:inherit;font-weight:700;min-width:44px;min-height:44px;padding:.65rem 1.3rem;border:2px solid transparent;border-radius:12px;background:var(--accent);color:var(--btn-text);cursor:pointer;transition:transform .12s,background .2s}
   button:hover{transform:scale(1.06)}
-  button:focus-visible{outline:3px solid var(--text);outline-offset:3px}
+  button:focus-visible{outline:3px solid var(--focus-ring);outline-offset:3px;box-shadow:0 0 0 2px var(--bg1)}
   .levels{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
   .levels button{background:transparent;color:var(--text);border-color:var(--border)}
   .levels button[aria-pressed="true"]{background:var(--accent2);color:var(--accent2-text);border-color:var(--accent2)}
@@ -40,14 +40,16 @@
   .opts button{background:transparent;color:var(--text);border-color:var(--border);padding:.4rem 1rem}
   .opts button[aria-pressed="true"]{background:var(--accent);color:var(--btn-text)}
   small{color:var(--muted)}
-  @media(max-height:700px){body{justify-content:flex-start;gap:8px;padding:8px}.wrap{width:min(78vw,calc(100vh - 190px),480px)}}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  @media(max-width:400px){body{gap:9px}.hud{gap:6px 14px;font-size:.95rem}.wrap{width:min(92vw,480px)}#msg{gap:6px;padding:.65rem}#msg h2{font-size:1.6rem}#sub{font-size:.88rem}#scores{padding:.4rem .65rem;font-size:.8rem}.levels{gap:5px}.levels button{padding:.45rem .7rem}.opts{gap:6px}.opts button{padding:.35rem .55rem}}
+  @media(max-height:700px){body{justify-content:flex-start;gap:8px;padding:8px}.wrap{width:min(92vw,calc(100vh - 190px),480px)}}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
   <h1>Snake</h1>
   <div class="hud">
-    <span>Score: <b id="score">0</b></span>
+    <span aria-live="polite" aria-atomic="true">Score: <b id="score">0</b></span>
     <span>Level: <b id="lvl">Normal</b></span>
     <span>Best: <b id="best">0</b></span>
   </div>
@@ -69,6 +71,7 @@
       </div>
     </div>
   </div>
+  <p id="gameAnnouncement" class="sr-only" aria-live="assertive" aria-atomic="true"></p>
   <div class="pad" aria-label="On-screen controls">
     <button class="up" data-d="up" aria-label="Up">&#9650;</button>
     <button class="left" data-d="left" aria-label="Left">&#9664;</button>
@@ -84,6 +87,8 @@
 <script>
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const N = 20, S = cv.width / N;
+const motionQuery=window.matchMedia('(prefers-reduced-motion: reduce)');
+let reducedMotion=motionQuery.matches;
 const DIRS = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const LEVELS = {
   easy:   {name:'Easy',   speed:180, min:110, step:8,  every:5, wrap:true,  rocks:0, desc:'Slow snake. Walls wrap around.'},
@@ -91,7 +96,7 @@ const LEVELS = {
   hard:   {name:'Hard',   speed:105, min:45,  step:10, every:3, wrap:false, rocks:7, desc:'Fast, deadly walls and rocks in the way.'}
 };
 let level = 'normal', hc = false, muted = false, leaderboard = {}, audioCtx = null;
-let snake, dir, nextDir, food, rocks, score, timer, running = false, paused = false, speed, best = {}, motionFrom = [], lastStep = 0, particles = [], scorePops = [], raf = 0;
+let snake, dir, nextDir, turnQueued = false, food, rocks, score, timer, running = false, paused = false, speed, best = {}, motionFrom = [], lastStep = 0, particles = [], scorePops = [], raf = 0;
 
 function load(){ try {
   best = JSON.parse(localStorage.getItem('snakeBest2') || '{}');
@@ -119,13 +124,13 @@ function applyUI(){
   document.getElementById('soundBtn').setAttribute('aria-pressed', muted);
   document.getElementById('soundBtn').textContent = 'Sound: ' + (muted ? 'off' : 'on');
   renderLeaderboard();
-  if (snake) draw();
+  if (snake) draw(running ? (paused ? 0 : reducedMotion ? 1 : Math.min(1,(performance.now()-lastStep)/speed)) : 1);
 }
 function free(x, y){ return !snake.some(s => s.x === x && s.y === y) && !rocks.some(r => r.x === x && r.y === y) && !(food && food.x === x && food.y === y); }
 function reset(){
   const L = LEVELS[level];
   snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
-  dir = nextDir = 'right'; score = 0; speed = L.speed; rocks = []; food = null; particles = []; scorePops = []; motionFrom = snake.map(s => ({...s}));
+  dir = nextDir = 'right'; turnQueued = false; score = 0; speed = L.speed; rocks = []; food = null; particles = []; scorePops = []; motionFrom = snake.map(s => ({...s}));
   document.getElementById('score').textContent = 0;
   while (rocks.length < L.rocks){
     const x = Math.floor(Math.random()*N), y = Math.floor(Math.random()*N);
@@ -134,48 +139,54 @@ function reset(){
   placeFood();
 }
 function placeFood(){
-  let x, y;
-  do { x = Math.floor(Math.random()*N); y = Math.floor(Math.random()*N); } while (!free(x, y));
-  food = {x, y};
+  const empty=[];
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)
+    if(!snake.some(s=>s.x===x&&s.y===y)&&!rocks.some(r=>r.x===x&&r.y===y))empty.push({x,y});
+  if(!empty.length){food=null;return false;}
+  food=empty[Math.floor(Math.random()*empty.length)];return true;
 }
 function start(){
   reset(); running = true; paused = false;
+  document.getElementById('gameAnnouncement').textContent='';
   document.getElementById('go').hidden = false;
   document.querySelector('.levels').hidden = false; document.getElementById('desc').hidden = false;
   document.getElementById('pauseActions').hidden = true;
   document.getElementById('msg').classList.add('hide');
-  clearInterval(timer); lastStep = performance.now(); timer = setInterval(tick, speed); cancelAnimationFrame(raf); animate();
+  clearInterval(timer); lastStep = performance.now(); timer = setInterval(tick, speed); cancelAnimationFrame(raf);if(!reducedMotion)animate();else draw(1);
 }
 function setDir(d){
-  const c = DIRS[dir], n = DIRS[d];
-  if (c[0] + n[0] !== 0 || c[1] + n[1] !== 0) nextDir = d;
+  if(turnQueued||d===nextDir)return;
+  const c=DIRS[nextDir],n=DIRS[d];
+  if(c[0]+n[0]!==0||c[1]+n[1]!==0){nextDir=d;turnQueued=true;}
 }
 function tick(){
   if (paused) return;
   const L = LEVELS[level];
-  dir = nextDir;
+  dir = nextDir; turnQueued=false;
   const oldSnake = snake.map(s => ({...s}));
   let hx = snake[0].x + DIRS[dir][0], hy = snake[0].y + DIRS[dir][1];
   if (L.wrap){ hx = (hx + N) % N; hy = (hy + N) % N; }
   else if (hx < 0 || hy < 0 || hx >= N || hy >= N) return gameOver();
-  if (snake.some(s => s.x === hx && s.y === hy) || rocks.some(r => r.x === hx && r.y === hy)) return gameOver();
+  const eating=hx===food.x&&hy===food.y;
+  const bodyForCollision=eating?snake:snake.slice(0,-1);
+  if (bodyForCollision.some(s => s.x === hx && s.y === hy) || rocks.some(r => r.x === hx && r.y === hy)) return gameOver();
   snake.unshift({x:hx, y:hy});
-  if (hx === food.x && hy === food.y){
-    burst(food.x*S + S/2, food.y*S + S/2);
-    scorePops.push({x:food.x*S+S/2,y:food.y*S+S/2,life:.85,max:.85,text:'+1'});
+  if (eating){
+    if(!reducedMotion){burst(food.x*S + S/2, food.y*S + S/2);scorePops.push({x:food.x*S+S/2,y:food.y*S+S/2,life:.85,max:.85,text:'+1'});}
     playSound('eat');
     score++; document.getElementById('score').textContent = score;
     if (speed > L.min && score % L.every === 0){ speed = Math.max(L.min, speed - L.step); clearInterval(timer); timer = setInterval(tick, speed); }
-    placeFood();
+    motionFrom=oldSnake;lastStep=performance.now();
+    if(!placeFood()){draw(0);return gameWon();}
   } else snake.pop();
-  motionFrom = oldSnake; lastStep = performance.now(); draw(0);
+  motionFrom = oldSnake; lastStep = performance.now(); draw(reducedMotion?1:0);
 }
 function burst(x,y){
   const styles=getComputedStyle(document.body), palette=['--particle-a','--particle-b','--particle-c','--particle-d'].map(v=>styles.getPropertyValue(v).trim());
   for(let i=0;i<18;i++){const a=Math.random()*Math.PI*2, v=45+Math.random()*115; particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-25,life:.45+Math.random()*.35,max:.8,size:2+Math.random()*3,color:palette[i%palette.length]});}
 }
 function animate(now=performance.now()){
-  if(!running) return;
+  if(!running||paused||reducedMotion) return;
   const dt=Math.min(.04, Math.max(0,(now-(animate.prev||now))/1000)); animate.prev=now;
   particles=particles.filter(p=>p.life>0); particles.forEach(p=>{p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=150*dt;});
   scorePops=scorePops.filter(p=>p.life>0);scorePops.forEach(p=>{p.life-=dt;p.y-=38*dt;});
@@ -187,11 +198,23 @@ function gameOver(){
   recordScore(); playSound('over');
   cancelAnimationFrame(raf); document.getElementById('title').textContent = 'Game over';
   document.getElementById('sub').textContent = 'You scored ' + score + ' on ' + LEVELS[level].name + '.';
+  document.getElementById('gameAnnouncement').textContent='Game over. You scored '+score+' on '+LEVELS[level].name+'.';
   document.getElementById('go').textContent = 'Play again';
   document.querySelector('.levels').hidden = true; document.getElementById('desc').hidden = true;
   document.getElementById('pauseActions').hidden = true;
   renderLeaderboard();
   document.getElementById('msg').classList.remove('hide');
+}
+function gameWon(){
+  clearInterval(timer);running=false;
+  if(score>(best[level]||0)){best[level]=score;document.getElementById('best').textContent=score;save();}
+  recordScore();playSound('over');cancelAnimationFrame(raf);
+  document.getElementById('title').textContent='Board cleared!';
+  document.getElementById('sub').textContent='You filled every open space and scored '+score+' on '+LEVELS[level].name+'.';
+  document.getElementById('gameAnnouncement').textContent='Board cleared. You scored '+score+' on '+LEVELS[level].name+'.';
+  document.getElementById('go').textContent='Play again';
+  document.querySelector('.levels').hidden=true;document.getElementById('desc').hidden=true;
+  document.getElementById('pauseActions').hidden=true;renderLeaderboard();document.getElementById('msg').classList.remove('hide');
 }
 
 function renderLeaderboard(){
@@ -225,8 +248,14 @@ function showMainMenu(){
 function togglePause(){
   if(!running)return;
   paused=!paused;playSound('pause');
-  if(paused){document.getElementById('title').textContent='Paused';document.getElementById('sub').textContent='Take a breath. Your run is waiting.';document.querySelector('.levels').hidden=true;document.getElementById('desc').hidden=true;document.getElementById('go').hidden=true;document.getElementById('pauseActions').hidden=false;document.getElementById('msg').classList.remove('hide');}
-  else{document.getElementById('msg').classList.add('hide');document.getElementById('go').hidden=false;document.getElementById('pauseActions').hidden=true;lastStep=performance.now();}
+  if(paused){
+    const now=performance.now(),progress=reducedMotion?1:Math.min(1,(now-lastStep)/speed);
+    motionFrom=snake.map((s,i)=>{const from=motionFrom[i]||s;let dx=s.x-from.x,dy=s.y-from.y;if(LEVELS[level].wrap){if(Math.abs(dx)>N/2)dx-=Math.sign(dx)*N;if(Math.abs(dy)>N/2)dy-=Math.sign(dy)*N;}return{x:from.x+dx*progress,y:from.y+dy*progress};});
+    clearInterval(timer);cancelAnimationFrame(raf);lastStep=now;draw(0);
+    document.getElementById('title').textContent='Paused';document.getElementById('sub').textContent='Take a breath. Your run is waiting.';document.querySelector('.levels').hidden=true;document.getElementById('desc').hidden=true;document.getElementById('go').hidden=true;document.getElementById('pauseActions').hidden=false;document.getElementById('msg').classList.remove('hide');
+  }else{
+    document.getElementById('msg').classList.add('hide');document.getElementById('go').hidden=false;document.getElementById('pauseActions').hidden=true;lastStep=performance.now();timer=setInterval(tick,speed);if(!reducedMotion)animate();
+  }
 }
 
 function draw(progress=1){
@@ -247,18 +276,20 @@ function draw(progress=1){
              ctx.moveTo(r.x*S + S - 4, r.y*S + 4); ctx.lineTo(r.x*S + 4, r.y*S + S - 4); ctx.stroke(); }
   });
   // food (diamond in high contrast so shape, not color, identifies it)
-  const fx = food.x*S + S/2, fy = food.y*S + S/2;
-  ctx.save();
-  if (hc){
-    ctx.fillStyle = colors.getPropertyValue('--food'); ctx.strokeStyle = colors.getPropertyValue('--contrast-line'); ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(fx, fy - S/2 + 2); ctx.lineTo(fx + S/2 - 2, fy); ctx.lineTo(fx, fy + S/2 - 2); ctx.lineTo(fx - S/2 + 2, fy); ctx.closePath(); ctx.fill(); ctx.stroke();
-  } else {
-    ctx.shadowColor = colors.getPropertyValue('--food'); ctx.shadowBlur = 13; ctx.fillStyle = colors.getPropertyValue('--food');
-    ctx.beginPath(); ctx.arc(fx, fy, S/2 - 3, 0, Math.PI*2); ctx.fill();
-    ctx.shadowBlur = 0; ctx.fillStyle = colors.getPropertyValue('--food-highlight');
-    ctx.beginPath(); ctx.arc(fx - 3, fy - 3, 3, 0, Math.PI*2); ctx.fill();
+  if(food){
+    const fx = food.x*S + S/2, fy = food.y*S + S/2;
+    ctx.save();
+    if (hc){
+      ctx.fillStyle = colors.getPropertyValue('--food'); ctx.strokeStyle = colors.getPropertyValue('--contrast-line'); ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(fx, fy - S/2 + 2); ctx.lineTo(fx + S/2 - 2, fy); ctx.lineTo(fx, fy + S/2 - 2); ctx.lineTo(fx - S/2 + 2, fy); ctx.closePath(); ctx.fill(); ctx.stroke();
+    } else {
+      ctx.shadowColor = colors.getPropertyValue('--food'); ctx.shadowBlur = 13; ctx.fillStyle = colors.getPropertyValue('--food');
+      ctx.beginPath(); ctx.arc(fx, fy, S/2 - 3, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0; ctx.fillStyle = colors.getPropertyValue('--food-highlight');
+      ctx.beginPath(); ctx.arc(fx - 3, fy - 3, 3, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
   }
-  ctx.restore();
   // snake
   for (let i = snake.length - 1; i >= 0; i--){
     const s = snake[i], head = i === 0, from = motionFrom[i] || s;
@@ -279,7 +310,7 @@ function draw(progress=1){
 }
 
 document.getElementById('go').onclick = start;
-document.querySelectorAll('.levels button').forEach(b => b.onclick = () => { level = b.dataset.l; save(); applyUI(); });
+document.querySelectorAll('.levels button').forEach(b => b.onclick = () => { if(running)return; level = b.dataset.l; save(); applyUI(); });
 document.getElementById('hcBtn').onclick = () => { hc = !hc; save(); applyUI(); };
 document.getElementById('soundBtn').onclick = () => { muted=!muted;save();applyUI();if(!muted)playSound('eat'); };
 document.getElementById('resume').onclick=togglePause;
@@ -288,11 +319,20 @@ document.getElementById('mainMenu').onclick=showMainMenu;
 document.querySelectorAll('.pad button').forEach(b => b.onclick = () => running && setDir(b.dataset.d));
 addEventListener('keydown', e => {
   const map = {ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down',ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right'};
-  if (map[e.key]){ e.preventDefault(); if (running) setDir(map[e.key]); }
-  else if (e.key === ' ' && running){ e.preventDefault(); togglePause(); }
+  if (map[e.key]){ e.preventDefault(); if (running && !paused) setDir(map[e.key]); }
+  else if (e.key === ' ' && running){
+    e.preventDefault();const active=document.activeElement,buttonOwnsSpace=active.matches('button,input,select,textarea,[contenteditable="true"]')&&getComputedStyle(active).visibility!=='hidden';
+    if(!e.repeat&&!buttonOwnsSpace)togglePause();
+  }
   else if (e.key === 'h' || e.key === 'H'){ hc = !hc; save(); applyUI(); }
   else if (e.key === 'Enter' && !running && document.activeElement.tagName !== 'BUTTON') start();
 });
+const onMotionChange=e=>{
+  reducedMotion=e.matches;
+  if(reducedMotion){cancelAnimationFrame(raf);particles=[];scorePops=[];if(running){motionFrom=snake.map(s=>({...s}));draw(1);}}
+  else if(running&&!paused){motionFrom=snake.map(s=>({...s}));lastStep=performance.now();animate.prev=lastStep;clearInterval(timer);timer=setInterval(tick,speed);animate();}
+};
+if(motionQuery.addEventListener)motionQuery.addEventListener('change',onMotionChange);else motionQuery.addListener(onMotionChange);
 let t0;
 cv.addEventListener('touchstart', e => { t0 = e.touches[0]; }, {passive:true});
 cv.addEventListener('touchend', e => {
